@@ -10,11 +10,17 @@ tags = {
 Name = "PythonAppInstance"
 }
 
-# provisioner "remote-exec" {
-# inline = [
-# "docker run -d -p 80:80 python-app"
-# ]
-# }
+ provisioner "remote-exec" {
+ inline = [
+ "docker run -d -p 80:80 python-app"
+ ]
+ connection {
+            type        = "ssh"
+            user        = "ec2-user" # lub ubuntu, w zależności od używanej AMI
+            private_key = file("~/.ssh/private.key") # Zmień ścieżkę na właściwy klucz prywatny
+            host        = self.public_ip
+        }
+ }
 }
 
 variable "region" {
