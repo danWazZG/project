@@ -17,7 +17,7 @@ Name = "PythonAppInstance"
  connection {
             type        = "ssh"
             user        = "ec2-user" # lub ubuntu, w zależności od używanej AMI
-            private_key = file("/root/.ssh/private.key") # Zmień ścieżkę na właściwy klucz prywatny
+            private_key = file("${path.module}/klucze.pem") # Zmień ścieżkę na właściwy klucz prywatny
             host        = self.public_ip
         }
  }
