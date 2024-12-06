@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+    environment {
+        DOCKER_IMAGE = 'python-app'
+        AWS_REGION = 'us-east-1'
+        INSTANCE_ID = '<AWS_INSTANCE_ID>'
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh 'python3 -m unittest test_app.py'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $DOCKER_IMAGE .'
+            }
+        }
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+        stage('Deploy to AWS') {
+            steps {
+                script {
+                    def testPassed = sh(script: 'python3 -m unittest test_app.py', returnStatus: true) == 0
+                    if (testPassed) {
+                        echo 'Tests passed. Deploying application.'
+                        sh 'terraform apply -auto-approve tfplan'
+                    } else {
+                        error('Tests failed. Deployment aborted.')
+                    }
+                }
+            }
+        }
+    }
+}
