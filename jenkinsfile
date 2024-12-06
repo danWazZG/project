@@ -3,7 +3,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'python-app'
         AWS_REGION = 'us-east-1'
-        INSTANCE_ID = '<AWS_INSTANCE_ID>'
+        INSTANCE_ID = 'i-0ee5037f620a32c2e'
     }
     stages {
         stage('Checkout') {
